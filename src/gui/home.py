@@ -1,5 +1,5 @@
 from tkinter import *
-import finance
+from src.gui import finance
 
 def home_display(root):    
     #region FUNCTIONS

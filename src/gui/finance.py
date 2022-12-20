@@ -1,5 +1,6 @@
 from tkinter import *
-import home
+from src.gui import home
+from src.components.update_finance import expenses
 
 def finance_display(root):
     #region FUNCTIONS
@@ -9,7 +10,7 @@ def finance_display(root):
 
     def updateExpenses():
         destroyAllObjects()
-        home.home_display(root)
+        expenses.update_expenses(root)
 
     def returnHome():
         destroyAllObjects()
@@ -18,7 +19,7 @@ def finance_display(root):
     #endregion
 
     #region OBJECTS
-    button_updateExpenses = Button(root, text="Finance", padx=50, pady=8, command=updateExpenses)
+    button_updateExpenses = Button(root, text="Update Expenses", padx=50, pady=8, command=updateExpenses)
     button_updateExpenses.grid(row=3, column=1, columnspan=3)
 
     button_return = Button(root, text="<< Return", command=returnHome, bd=1, relief=SUNKEN)
