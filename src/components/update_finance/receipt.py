@@ -2,8 +2,10 @@ from tkinter import *
 import urllib.request as requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import global_setting as gs
+import global_settings as gs
 import openpyxl
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from src.components.settings import system
 
 class Receipt:
     # Class attribute
@@ -30,23 +32,15 @@ class Receipt:
         "unit cost": 0.0,
         "total cost": 0.0
     }]
-    receipt_header = {
-        "Date": "Date",
-        "Place Name": "Place Name",
-        "Category": "Category",
-        "Description": "Description",
-        "Type": "Type",
-        "Qtd": "Qtd",
-        "Unit": "Unit",
-        "Unit Cost": "Unit Cost",
-        "Total Cost": "Total Cost",
-        "Receipt Key": "Receipt Key"
-    }        
+    receipt_header = (
+        "Date", "Place Name", "Category", "Description", "Type",
+        "Qtd", "Unit", "Unit Cost", "Total Cost", "Receipt Key"
+    )
 
     # Class methods
 
     #region MANIPULATE RECEIPT DATA
-    def printReceiptData(self, root: Tk):
+    def printReceiptData(self, frame: Frame):
         key_receipt_list = list(self.receipt_data.keys())
         val_receipt_list = list(self.receipt_data.values())
         
@@ -54,10 +48,10 @@ class Receipt:
             if (key_receipt_list[i] == "total items"):
                 for j in range(len(self.item_data)):
                     val_item_list = list(self.item_data[j].values())
-                    reportLabel = Label(root, text=str(val_item_list))
+                    reportLabel = Label(frame, text=str(val_item_list))
                     reportLabel.pack()
 
-            reportLabel = Label(root, text=str(val_receipt_list[i]))
+            reportLabel = Label(frame, text=str(val_receipt_list[i]))
             reportLabel.pack()
 
         return
@@ -202,56 +196,161 @@ class Receipt:
     
     #endregion
 
-   
     #region MANIPULATE SHEETS
+    def createReceiptHistory(self):
+        if (system.checkDirectoryExist(gs.__expenses_path__)):
+            # creating a blank Workbook
+            book = openpyxl.Workbook()
+            sheet = book.active
+
+            # add header
+            header = (
+                'Date', 'Place Name', 'Place CNPJ', 'Place Address',
+                'Total Items', 'Total Value', 'Discount', 'Final Value',
+                'Buyer', 'Payment', 'Receipt Key'
+            )
+            sheet.append(header)
+
+            # Creating a table
+            tab = Table(displayName='receipt_history', ref="A1:K2")
+            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
+                       showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+            tab.tableStyleInfo = style
+            sheet.add_table(tab)
+
+            # Saving the file
+            book.save(gs.__receipt_history__)
+
+    def createUpdateFile(self):
+        if system.checkDirectoryExist(gs.__expenses_path__):
+            #creating a blank Workbook
+            book = openpyxl.Workbook()
+            sheet = book.create_sheet(gs.__expenses_page__)
+
+            # add header
+            header = (
+                'Month', 'Date', 'Place Name',
+                'Category', 'Description', 'Type',
+                'Qtd', 'Unit', 'Unit Cost', 'Total Cost',
+                'Receipt Key'
+                )
+            sheet.append(header)
+
+            # Creating a table
+            tab = Table(displayName='month_expenses', ref="A1:K2")
+            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
+                       showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+            tab.tableStyleInfo = style
+            sheet.add_table(tab)
+
+            # Saving the file
+            book.save(gs.__expenses_update__)
+
     def updateSheets(self):
-        def writerBackUp(header, data, file_name: str):
-            pd.DataFrame(data).to_csv(file_name, columns=header, index=False)
+        def writerBackUp():
+            #TODO check if user has the directory 
+            #check if directory to store backup does not exist, if not, create
+            if not (system.checkDirectoryExist(gs.__expend_backup__)):
+                system.createDirectory(gs.__expend_backup__)
+            
+            #check if file to store receipt history does not exist, if not, create
+            if not (system.checkFileExist(gs.__receipt_history__)):
+                self.createReceiptHistory()
+                
+            
+            receipt_date =  self.receipt_data["date"].replace('/', '_').replace(' ', '_').replace(':', '_')           
+            filename = gs.__expend_backup__ + receipt_date + ".csv"
+
+            data = []
+            receipt = self.receipt_data
+
+            for i in range(len(self.item_data)):
+                item = self.item_data[i]
+
+                item_row = {
+                    'Date': receipt['date'],
+                    'Place Name': receipt['place name'],                    
+                    'Category': item['category'],
+                    'Description': item['description'],
+                    'Type': item['type'],
+                    'Qtd': item['qtd'],
+                    'Unit': item['unit'],
+                    'Unit Cost': item['unit cost'],
+                    'Total Cost': item['total cost'],
+                    "Receipt Key": receipt['receipt key']
+                }
+                
+                data.append(item_row)
+            
+            pd.DataFrame(data).to_csv(filename, columns=self.receipt_header, index=False)
+
+            # Store receipt summary
+            receipt_infos = {
+                'Date': receipt['date'],
+                'Place Name': receipt['place name'],
+                'Place CNPJ': receipt['place cnpj'],
+                'Place Address': receipt['place address'],
+                'Total Items': receipt['total items'],
+                'Total Value': receipt['total value'],
+                'Discount': receipt['discount'],
+                'Final Value': receipt['final value'],
+                'Buyer': receipt['buyer'],
+                'Payment': receipt['payment'],
+                'Receipt Key': receipt['receipt key']
+            }
+            book = openpyxl.load_workbook(gs.__receipt_history__)
+            sheet = book.active
+            sheet.append(list(receipt_infos.values()))
+
+            book.save(gs.__receipt_history__)
+
+            return
 
         def getRowValues(data: dict):
             val = list(data.values())
             return val
 
-        def updateSheet(data: list):
-            book = openpyxl.load_workbook(gs.__expenses__)
+        def updateSheet():
+            if not system.checkFileExist(gs.__expenses_update__):
+                self.createUpdateFile()
+
+            book = openpyxl.load_workbook(gs.__expenses_update__)
             sheet = book[gs.__expenses_page__]
 
-            for i in range(len(data)):
-                val = getRowValues(data[i])
+            data = []
+            receipt = self.receipt_data
+
+            for i in range(len(self.item_data)):
+                item = self.item_data[i]
+                item_row = {
+                    'Month': '',
+                    'Date': receipt['date'],
+                    'Place Name': receipt['place name'],
+                    'Category': item['category'],
+                    'Description': item['description'],
+                    'Type': item['type'],
+                    'Qtd': item['qtd'],
+                    'Unit': item['unit'],
+                    'Unit Cost': item['unit cost'],
+                    'Total Cost': item['total cost'],
+                    "Receipt Key": receipt['receipt key']
+                }
+
+                data.append(item_row)
+
+            for row in data:
+                val = getRowValues(row)
                 sheet.append(val)
 
-            book.save(gs.__expenses__)
-
-
-        receipt_date =  self.receipt_data["date"].replace('/', '_').replace(' ', '_').replace(':', '_')
-        filename = gs.__data_base__ + "/expenses/" + receipt_date + ".csv"
-        header = self.receipt_header
+            book.save(gs.__expenses_update__)
     
-        data = []
-        receipt = self.receipt_data
+            return
 
-        for i in range(len(self.item_data)):
-            item = self.item_data[i]
-
-            item_row = {
-                'Date': receipt['date'],
-                'Place Name': receipt['place name'],
-                'Category': item['category'],
-                'Description': item['description'],
-                'Type': item['type'],
-                'Qtd': item['qtd'],
-                'Unit': item['unit'],
-                'Unit Cost': item['unit cost'],
-                'Total Cost': item['total cost'],
-                "Receipt Key": receipt['receipt key']
-            }
-
-            data.append(item_row)
-
-        writerBackUp(header, data, filename)
-        updateSheet(data)
+        writerBackUp()
+        updateSheet()
 
     
-
+    def editInformation():
+        print('test')
 
     #endregion

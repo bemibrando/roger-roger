@@ -20,10 +20,16 @@ This is a virtual assistent, build with python to assist my life.
 ## Overview
 
 ### <b id="the-challenge">The challenge</b>
-- Update finance worksheet scanning a QR Code
+- Update finance worksheet scanning a Receipt's QR Code.
+- Create a backupfile to each update.
 
 ### <b id="project-composition">Project Composition</b>
-- Open a window when starts the project
+- Open a window when starts the project.
+- Navigation between "pages".
+- Open Camera to Read QR Code.
+- Scrap information from receipt page.
+- Check if exist the file to add the information, if not create it.
+- Add this information into a backup file and update pre-selected excel file .
 
 
 ### <b id="buid-with">Build with</b>
@@ -37,6 +43,7 @@ This is a virtual assistent, build with python to assist my life.
 ## <b id="useful-resources">Useful Resources</b>
 - [Python](https://www.python.org/) - Python is a high-level, general-purpose programming language.
 - [Python tkinter package](https://docs.python.org/3/library/tkinter.html) - Tk interface is the standeard Python interface to the Tcl/Tk GUI toolkit.
+- [Pandas PyData](https://pandas.pydata.org/) - Pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language.
 
 ## Author
 <div sytle="display: inline-block;">
