@@ -41,39 +41,41 @@ class Receipt:
     # Class methods
 
     #region MANIPULATE RECEIPT DATA
+    def getDataStatus(self):
+        return self.receipt_data['found']
+
     def printReceiptData(self, frame: Frame):
         key_receipt_list = list(self.receipt_data.keys())
         val_receipt_list = list(self.receipt_data.values())
         
         for i in range(1, len(self.receipt_data)):
-            
+            # Organize Receipt Items
             if (key_receipt_list[i] == "total items"):
                 key_item_list = list(self.item_data[0].keys())
-                self.treeTable =  ttk.Treeview(frame, column=key_item_list, show='headings', height=15)
+                itemsTable =  ttk.Treeview(frame, column=key_item_list, show='headings', height=15)
                 
                 # Add Header Name Reference
                 for k in range(len(key_item_list)):
-                    if key_item_list[k] == 'category':
-                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=100)
-
-                    elif key_item_list[k] == 'description':
-                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=350)
+                    if key_item_list[k] == 'description':
+                        itemsTable.column(key_item_list[k], anchor=CENTER, width=350)
                     elif key_item_list[k] == 'qtd' or key_item_list[k] == 'unit':
-                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=50)
+                        itemsTable.column(key_item_list[k], anchor=CENTER, width=50)
                     else:
-                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=110)
+                        itemsTable.column(key_item_list[k], anchor=CENTER, width=100)
 
                 # Add Header
                 for k in range(len(key_item_list)):
-                    self.treeTable.heading(key_item_list[k], text=str(key_item_list[k]), anchor=CENTER)
+                    itemsTable.heading(key_item_list[k], text=str(key_item_list[k]), anchor=CENTER)
 
                 for j in range(len(self.item_data)):
                     val_item_list = list(self.item_data[j].values())
-                    self.treeTable.insert(parent='', index=j, iid=j, text='', values=val_item_list)
+                    itemsTable.insert(parent='', index=j, iid=j, text='', values=val_item_list)
                 
-                self.treeTable.pack()
+                itemsTable.pack()
 
             elif i == 1:
+                # Table for place information
+
                 placeTable =  ttk.Treeview(frame, column=('0', '1'), show="tree", height=3)                
                 
                 placeTable.column('0', width=80)
@@ -87,6 +89,8 @@ class Receipt:
                 placeTable.pack()
 
             elif i > 4:
+                # Table for receipt details
+
                 detailTable =  ttk.Treeview(frame, column=('0', '1'), show="tree", height=7)
                 detailTable.column('0', width=80)
                 detailTable.column('1', width=600)
@@ -240,6 +244,124 @@ class Receipt:
 
         return TRUE
     
+    def entryBoxes(self, frame: Frame):
+        # TABLE PLACE
+        placeFrame = Frame(frame)
+        placeFrame.pack()
+
+        placename_label = Label(placeFrame, text="place name")
+        placename_label.grid(row=0, column=0)
+        placename_entry = Entry(placeFrame, width=60)
+        placename_entry.grid(row=0, column=1)
+        placename_entry.insert(0, self.receipt_data['place name'])
+
+        placecnpj_label = Label(placeFrame, text="place name")
+        placecnpj_label.grid(row=1, column=0)
+        placecnpj_entry = Entry(placeFrame, width=60)
+        placecnpj_entry.grid(row=1, column=1)
+        placecnpj_entry.insert(0, self.receipt_data['place cnpj'])
+
+        placeaddress_label = Label(placeFrame, text="place address")
+        placeaddress_label.grid(row=2, column=0)
+        placeaddress_entry = Entry(placeFrame, width=60)
+        placeaddress_entry.grid(row=2, column=1)
+        placeaddress_entry.insert(0, self.receipt_data['place address'])
+
+
+        # TABLE RECEIPT ITEM
+        itemFrame = Frame(frame)
+        itemFrame.pack()
+                
+        category_label = Label(itemFrame, text="category", height=2, width=10)
+        category_label.grid(row=0, column=0)
+        description_label = Label(itemFrame, text="description", height=2, width=35)
+        description_label.grid(row=0, column=1)
+        type_label = Label(itemFrame, text="type", height=2)
+        type_label.grid(row=0, column=2)
+        qtd_label = Label(itemFrame, text="qtd", height=2, width=2)
+        qtd_label.grid(row=0, column=3)
+        unit_label = Label(itemFrame, text="unit", height=2, width=2)
+        unit_label.grid(row=0, column=4)
+        unitcost_label = Label(itemFrame, text="unit cost", height=2)
+        unitcost_label.grid(row=0, column=5)
+        totalcost_label = Label(itemFrame, text="total cost", height=2)
+        totalcost_label.grid(row=0, column=6)
+
+        for i, row in enumerate(self.item_data):
+            j = i + 1
+            category_entry = Entry(itemFrame)
+            category_entry.grid(row=j, column=0)
+            category_entry.insert(i, row['category'])
+            description_entry = Entry(itemFrame, width=60)
+            description_entry.grid(row=j, column=1)
+            description_entry.insert(i, row['description'])
+            type_entry = Entry(itemFrame)
+            type_entry.grid(row=j, column=2)
+            type_entry.insert(i, row['type'])
+            qtd_entry = Entry(itemFrame, width=6)
+            qtd_entry.grid(row=j, column=3)
+            qtd_entry.insert(i, row['qtd'])
+            unit_entry = Entry(itemFrame, width=6)
+            unit_entry.grid(row=j, column=4)
+            unit_entry.insert(i, row['unit'])
+            unitcost_entry = Entry(itemFrame)
+            unitcost_entry.grid(row=j, column=5)
+            unitcost_entry.insert(i, row['unit cost'])
+            totalcost_entry = Entry(itemFrame)
+            totalcost_entry.grid(row=j, column=6)
+            totalcost_entry.insert(i, row['total cost'])
+
+        # TABLE RECEIPT DETAILS
+        receiptFrame = Frame(frame)
+        receiptFrame.pack()
+
+        totalvalue_label = Label(receiptFrame, text="total value")
+        totalvalue_label.grid(row=0, column=0)
+        totalvalue_entry = Entry(receiptFrame, width=60)
+        totalvalue_entry.grid(row=0, column=1)
+        totalvalue_entry.insert(0, self.receipt_data['total value'])
+        
+        discount_label = Label(receiptFrame, text="discount")
+        discount_label.grid(row=1, column=0)
+        discount_entry = Entry(receiptFrame, width=60)
+        discount_entry.grid(row=1, column=1)
+        discount_entry.insert(0, self.receipt_data['discount'])
+        
+        finalvalue_label = Label(receiptFrame, text="final value")
+        finalvalue_label.grid(row=2, column=0)
+        finalvalue_entry = Entry(receiptFrame, width=60)
+        finalvalue_entry.grid(row=2, column=1)
+        finalvalue_entry.insert(0, self.receipt_data['final value'])
+        
+        date_label = Label(receiptFrame, text="date")
+        date_label.grid(row=3, column=0)
+        date_entry = Entry(receiptFrame, width=60)
+        date_entry.grid(row=3, column=1)
+        date_entry.insert(0, self.receipt_data['date'])
+        
+        buyer_label = Label(receiptFrame, text="buyer")
+        buyer_label.grid(row=4, column=0)
+        buyer_entry = Entry(receiptFrame, width=60)
+        buyer_entry.grid(row=4, column=1)
+        buyer_entry.insert(0, self.receipt_data['buyer'])
+        
+        payment_label = Label(receiptFrame, text="payment")
+        payment_label.grid(row=5, column=0)
+        payment_entry = Entry(receiptFrame, width=60)
+        payment_entry.grid(row=5, column=1)
+        payment_entry.insert(0, self.receipt_data['payment'])
+        
+        receiptkey_label = Label(receiptFrame, text="receipt key")
+        receiptkey_label.grid(row=6, column=0)
+        receiptkey_entry = Entry(receiptFrame, width=60)
+        receiptkey_entry.grid(row=6, column=1)
+        receiptkey_entry.insert(0, self.receipt_data['receipt key'])
+
+
+
+    def saveTable(self, frame: Frame):
+        #TODO
+        print('TO DO')
     #endregion
 
     #region MANIPULATE SHEETS
@@ -394,9 +516,5 @@ class Receipt:
 
         writerBackUp()
         updateSheet()
-
-    
-    def editInformation():
-        print('test')
 
     #endregion

@@ -13,3 +13,8 @@ def checkFileExist(dicPath: str):
 def destroyAllObjects(frame: Frame):
     for widget in frame.winfo_children():
         widget.destroy()
+
+def destroyButtons(frame: Frame):
+    for widget in frame.winfo_children():
+        if isinstance(widget, Button):
+            widget.destroy()
