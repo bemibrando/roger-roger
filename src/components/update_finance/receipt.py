@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import urllib.request as requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -45,18 +46,63 @@ class Receipt:
         val_receipt_list = list(self.receipt_data.values())
         
         for i in range(1, len(self.receipt_data)):
+            
             if (key_receipt_list[i] == "total items"):
+                key_item_list = list(self.item_data[0].keys())
+                self.treeTable =  ttk.Treeview(frame, column=key_item_list, show='headings', height=15)
+                
+                # Add Header Name Reference
+                for k in range(len(key_item_list)):
+                    if key_item_list[k] == 'category':
+                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=100)
+
+                    elif key_item_list[k] == 'description':
+                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=350)
+                    elif key_item_list[k] == 'qtd' or key_item_list[k] == 'unit':
+                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=50)
+                    else:
+                        self.treeTable.column(key_item_list[k], anchor=CENTER, width=110)
+
+                # Add Header
+                for k in range(len(key_item_list)):
+                    self.treeTable.heading(key_item_list[k], text=str(key_item_list[k]), anchor=CENTER)
+
                 for j in range(len(self.item_data)):
                     val_item_list = list(self.item_data[j].values())
-                    reportLabel = Label(frame, text=str(val_item_list))
-                    reportLabel.pack()
+                    self.treeTable.insert(parent='', index=j, iid=j, text='', values=val_item_list)
+                
+                self.treeTable.pack()
 
-            reportLabel = Label(frame, text=str(val_receipt_list[i]))
-            reportLabel.pack()
+            elif i == 1:
+                placeTable =  ttk.Treeview(frame, column=('0', '1'), show="tree", height=3)                
+                
+                placeTable.column('0', width=80)
+                placeTable.column('1', width=600)
+                
+                # Add content
+                for k in range(1, 4):
+                    value = (key_receipt_list[k], val_receipt_list[k])
+                    placeTable.insert(parent='', index='end', iid=k, text='', values=value)
+
+                placeTable.pack()
+
+            elif i > 4:
+                detailTable =  ttk.Treeview(frame, column=('0', '1'), show="tree", height=7)
+                detailTable.column('0', width=80)
+                detailTable.column('1', width=600)
+
+                for k in range(i, len(val_receipt_list)):
+                    value = (key_receipt_list[k], val_receipt_list[k])
+                    detailTable.insert(parent='', index='end', iid=k, text='', values=value)
+                    detailTable.pack()
+                
+                return
+            else:
+                continue
 
         return
     
-    def getReceiptData(self, readAddress):
+    def getReceiptData(self, readAddress: str):
         # Autor: View || Data: 2022/12/15
         def fixSpaces(address: str):
             address = address.strip()

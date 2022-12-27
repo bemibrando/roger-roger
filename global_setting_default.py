@@ -1,6 +1,6 @@
 #region ROGER SETUP
 __b2droid_icon__ = './src/assets/icons/b1droid2.ico'
-__screen_size__ = '600x600'
+__screen_size__ = '1000x800'
 __data_base__ = 'COMPLETE_PAHT_STORAGE_YOUR_DATABASE'
 #endregion
 
