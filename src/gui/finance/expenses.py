@@ -27,7 +27,6 @@ def update_expenses(root: Tk):
     def getQRCode():
         destroyAllObjects(frame)       
         readAddress = cam.read_qr_code()
-        print(readAddress)
 
         if(readAddress):
             cam.close_camera()
@@ -66,9 +65,12 @@ def update_expenses(root: Tk):
         buttonUpdateTable()
 
     def updateTable():
-        destroyButtons(frame)
 
         rec.saveTable(frame)
+        destroyAllObjects(frame)
+
+        rec.printReceiptData(frame)
+
 
         buttonHomeEditUpdate()
 

@@ -22,14 +22,16 @@ This is a virtual assistent, build with python to assist my life.
 ### <b id="the-challenge">The challenge</b>
 - Update finance worksheet scanning a Receipt's QR Code.
 - Create a backupfile to each update.
+- Edit scrapped information before update worksheet.
 
 ### <b id="project-composition">Project Composition</b>
 - Open a window when starts the project.
 - Navigation between "pages".
 - Open Camera to Read QR Code.
 - Scrap information from receipt page.
+- Edit scrapped information before update excel file.
 - Check if exist the file to add the information, if not create it.
-- Add this information into a backup file and update pre-selected excel file .
+- Add this information into a backup file and update pre-selected excel file.
 
 
 ### <b id="buid-with">Build with</b>

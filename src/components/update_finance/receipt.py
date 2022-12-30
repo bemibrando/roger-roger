@@ -255,7 +255,7 @@ class Receipt:
         placename_entry.grid(row=0, column=1)
         placename_entry.insert(0, self.receipt_data['place name'])
 
-        placecnpj_label = Label(placeFrame, text="place name")
+        placecnpj_label = Label(placeFrame, text="place cnpj")
         placecnpj_label.grid(row=1, column=0)
         placecnpj_entry = Entry(placeFrame, width=60)
         placecnpj_entry.grid(row=1, column=1)
@@ -357,11 +357,38 @@ class Receipt:
         receiptkey_entry.grid(row=6, column=1)
         receiptkey_entry.insert(0, self.receipt_data['receipt key'])
 
-
-
     def saveTable(self, frame: Frame):
-        #TODO
-        print('TO DO')
+        table = 0
+        for widget in frame.winfo_children():
+            itemTable = 0
+            # Check if object is a frame
+            if isinstance(widget, Frame):
+                labelName = ''                
+                itemRow = 0
+                for widgetFrame in widget.winfo_children():
+
+                    # Check if object is an Entry
+                    if isinstance(widgetFrame, Entry):
+                        if table == 0 or table == 2:
+                            self.receipt_data[labelName] = widgetFrame.get()
+                        if table == 1:
+                            getHeader = list(self.item_data[0].keys())
+
+                            self.item_data[itemTable][getHeader[itemRow]] = widgetFrame.get()
+
+                            # Check if row end
+                            if itemRow > 5:
+                                itemRow =  0 
+                                itemTable += 1
+                            else :
+                                itemRow += 1
+                            
+
+                    elif isinstance (widgetFrame, Label):
+                        labelName = widgetFrame.cget("text")
+
+                table += 1
+
     #endregion
 
     #region MANIPULATE SHEETS
@@ -418,6 +445,9 @@ class Receipt:
         def writerBackUp():
             #TODO check if user has the directory 
             #check if directory to store backup does not exist, if not, create
+            if not (system.checkDirectoryExist(gs.__expenses_path__)):
+                system.createDirectory(gs.__expenses_path__)
+                
             if not (system.checkDirectoryExist(gs.__expend_backup__)):
                 system.createDirectory(gs.__expend_backup__)
             
@@ -441,10 +471,10 @@ class Receipt:
                     'Category': item['category'],
                     'Description': item['description'],
                     'Type': item['type'],
-                    'Qtd': item['qtd'],
+                    'Qtd': float(item['qtd']),
                     'Unit': item['unit'],
-                    'Unit Cost': item['unit cost'],
-                    'Total Cost': item['total cost'],
+                    'Unit Cost': float(item['unit cost']),
+                    'Total Cost': float(item['total cost']),
                     "Receipt Key": receipt['receipt key']
                 }
                 
@@ -458,10 +488,10 @@ class Receipt:
                 'Place Name': receipt['place name'],
                 'Place CNPJ': receipt['place cnpj'],
                 'Place Address': receipt['place address'],
-                'Total Items': receipt['total items'],
-                'Total Value': receipt['total value'],
-                'Discount': receipt['discount'],
-                'Final Value': receipt['final value'],
+                'Total Items': int(receipt['total items']),
+                'Total Value': float(receipt['total value']),
+                'Discount': float(receipt['discount']),
+                'Final Value': float(receipt['final value']),
                 'Buyer': receipt['buyer'],
                 'Payment': receipt['payment'],
                 'Receipt Key': receipt['receipt key']
@@ -497,10 +527,10 @@ class Receipt:
                     'Category': item['category'],
                     'Description': item['description'],
                     'Type': item['type'],
-                    'Qtd': item['qtd'],
+                    'Qtd': float(item['qtd']),
                     'Unit': item['unit'],
-                    'Unit Cost': item['unit cost'],
-                    'Total Cost': item['total cost'],
+                    'Unit Cost': float(item['unit cost']),
+                    'Total Cost': float(item['total cost']),
                     "Receipt Key": receipt['receipt key']
                 }
 
