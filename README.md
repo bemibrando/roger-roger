@@ -4,7 +4,11 @@
 This is a virtual assistent, build with python to assist my life.
 
 <b>Build with:</b>
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
+<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" height="24px">
+<img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" height="24px">
+<img src="" height="24px">
+<img src="" height="24px">
 
 ## Table of contents
 
@@ -14,29 +18,76 @@ This is a virtual assistent, build with python to assist my life.
   - [Screenshot](#screenshot)
   - [Built with](#built-with)
   - [Links](#links)
+- [How to use](#how-to-use)
+  - [Install and Run](#install-and-run)
+  - [How to use the project](#how-to-use-the-project)
 - [Useful Resources](#useful-resources)
 - [Author](#author)
 
 ## Overview
 
 ### <b id="the-challenge">The challenge</b>
-- Update finance worksheet scanning a QR Code
+- Update finance worksheet scanning a Receipt's QR Code.
+- Create a backupfile to each update.
+- Edit scrapped information before update worksheet.
 
 ### <b id="project-composition">Project Composition</b>
-- Open a window when starts the project
+- Open a window when starts the project.
+- Navigation between "pages".
+- Open Camera to Read QR Code.
+- Scrap information from receipt page.
+- Edit scrapped information before update excel file.
+- Check if exist the file to add the information, if not create it.
+- Add this information into a backup file and update pre-selected excel file.
 
 
 ### <b id="buid-with">Build with</b>
-<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" height="24px"/>
+- Python: main language programming
+- Pandas: to manipulate data in spreadsheets
+- BeautifulSoup: to scrap webpage information
+- Tkinter: to build GUI
 
 ### <b id="links">Links</b>
 - Solution URL: [GitHub Repository](https://github.com/bemibrando/roger-roger/)
 
-<br />
+## How to use
+
+### Install and Run
+1. Make a clone of this repository and access the directory.
+```
+$ git clone git@github.com:bemibrando/roger-roger.git && cd roger-roger
+```
+
+2. [Install Python](https://www.python.org/downloads/)
+
+3. Install the dependencies
+```
+$ pip install pip
+```
+
+4. Run the system 
+```
+$ python rogerSystem.py
+```
+
+### How to use the project
+1. Make a copy of the `global_settings_default.py` and change it to `global_settings.py`
+    - This will allow the files to be stored in a folder.
+    - If you want to change the storege place of the files, you can open the `global_settings.py` and edit the path, files names and sheets name.
+2. To use functionality `Scan QR Code` you need to have a webcam. 
+
+
+<br /><br />
+
+
+
+<br /><br />
 
 ## <b id="useful-resources">Useful Resources</b>
 - [Python](https://www.python.org/) - Python is a high-level, general-purpose programming language.
 - [Python tkinter package](https://docs.python.org/3/library/tkinter.html) - Tk interface is the standeard Python interface to the Tcl/Tk GUI toolkit.
+- [Beautiful Soup](https://beautiful-soup-4.readthedocs.io/en/latest/) - Beautiful Soup is a Python library for pulling data out of HTML and XML files.
+- [Pandas PyData](https://pandas.pydata.org/) - Pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language.
 
 ## Author
 <div sytle="display: inline-block;">
