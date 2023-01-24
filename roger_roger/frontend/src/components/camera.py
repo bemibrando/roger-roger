@@ -5,6 +5,7 @@ import webbrowser as wb
 class VideoCamera(object):
     def __init__(self) -> None:
         self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.data = False
         
         # check if the camera is open
         if not self.cap.isOpened():
@@ -36,6 +37,7 @@ class VideoCamera(object):
             (self.grabbed, self.frame) = self.cap.read()
 
     def detect_qr_code(self):
+        self.data = False
         detector = cv2.QRCodeDetector()
 
         _, img = self.cap.read()
@@ -45,8 +47,16 @@ class VideoCamera(object):
 
         # check if there is a QRCode in the image
         if data:
-            print(data)
-            return str(data)
+            self.data = str(data)
+            print("detect: " + self.data)
+            
+
+    def get_qr_code(self):
+        if self.data:
+            print(self.data)
+            return self.data
+        else:
+            return False
 
 def gen(camera: VideoCamera):
     while True:
@@ -54,4 +64,4 @@ def gen(camera: VideoCamera):
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-        data = camera.detect_qr_code()
+        camera.detect_qr_code()

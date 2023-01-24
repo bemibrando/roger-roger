@@ -7,7 +7,7 @@ import {
     Redirect,
 } from "react-router-dom";
 
-import Finance from "./Finance";
+import Finance from "./finance/Finance";
 
 export default class HomePage extends Component {
     constructor(props){
@@ -20,7 +20,9 @@ export default class HomePage extends Component {
                 <Routes>
                     <Route exact path="/" element={<Finance/>}></Route>
                     <Route path="/finance/" element={<Finance/>}>
-                        <Route path="update/"></Route>
+                        <Route path="update/">
+                            <Route path="qrcode/"></Route>
+                        </Route>
                     </Route>
                 </Routes>
             </Router>

@@ -7,9 +7,12 @@
     <title>B1 - Camera</title>
 </head>
 <body>
-    <video width="320" height="240" controls>
-        <source src="data:video/webm;base64,{{ frames.gray|base64 }}" type="video/webm">
-    </video>
+    <div>
+        <img src="{% url 'read_qr_code' %}">
+    </div>
+
+    <button>Cancel</button>
+    <button>Cancel</button>
     <button>Cancel</button>
 </body>
 </html>
